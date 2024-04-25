@@ -68,6 +68,28 @@
       let alunosSalvos = JSON.parse(localStorage.getItem('alunos')) || [];
       alunosSalvos.push(aluno);
       localStorage.setItem('alunos', JSON.stringify(alunosSalvos));
+function adicionarNota(btn) {
+      let li = btn.parentNode;
+      let nomeNota = prompt("Digite o nome da nota:");
+      let nota = parseFloat(prompt("Digite a nota:"));
+      let alunoIndex = Array.from(li.parentNode.children).indexOf(li);
+      let alunosSalvos = JSON.parse(localStorage.getItem('alunos')) || [];
+      alunosSalvos[alunoIndex].notas.push({ nome: nomeNota, valor: nota });
+      localStorage.setItem('alunos', JSON.stringify(alunosSalvos));
+    }
+
+    function editarAluno(btn) {
+      let li = btn.parentNode;
+      let nome = li.querySelector("input[type='text']:nth-child(1)").value;
+      let ra = li.querySelector("input[type='text']:nth-child(2)").value;
+      let email = li.querySelector("input[type='email']").value;
+      let alunoIndex = Array.from(li.parentNode.children).indexOf(li);
+      let alunosSalvos = JSON.parse(localStorage.getItem('alunos')) || [];
+      alunosSalvos[alunoIndex].nome = nome;
+      alunosSalvos[alunoIndex].ra = ra;
+      alunosSalvos[alunoIndex].email = email;
+      localStorage.setItem('alunos', JSON.stringify(alunosSalvos));
+    }
     }
   </script>
 </body>

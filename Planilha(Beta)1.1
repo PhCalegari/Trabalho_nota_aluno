@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
@@ -95,9 +94,9 @@
           <th>Prova 2</th>
           <th>Prova Integrada 2</th>
           <th>AEP 2</th>
-          <th>Média Bimestre 1</th>
-          <th>Média Bimestre 2</th>
-          <th>Média Semestral</th>
+          <th>Média 1</th>
+          <th>Média 2</th>
+          <th>Média Final</th>
           <th>Status</th>
           <th>Ações</th>
         </tr>
@@ -108,36 +107,22 @@
     <button onclick="calcularNotas()">Calcular Notas</button>
   </div>
   <script>
-    // Função para adicionar um novo aluno
     function adicionarAluno() {
       let nome = document.getElementById("nome").value;
       let ra = document.getElementById("ra").value;
       let email = document.getElementById("email").value;
-      let prova1 = document.getElementById("prova_1").value;
-      let provaIntegrada1 = document.getElementById("prova_integrada_1").value;
-      let aep1 = document.getElementById("aep_1").value;
-      let prova2 = document.getElementById("prova_2").value;
-      let provaIntegrada2 = document.getElementById("prova_integrada_2").value;
-      let aep2 = document.getElementById("aep_2").value;
-
-      // Cria o objeto aluno com as notas de ambos os bimestres
-      let aluno = {
-        nome: nome,
-        ra: ra,
-        email: email,
-        notas: {
-          1: {
-            prova: prova1,
-            prova_integrada: provaIntegrada1,
-            aep: aep1
-          },
-          2: {
-            prova: prova2,
-            prova_integrada: provaIntegrada2,
-            aep: aep2
-          }
-        }
-      };
+      if (!/^[a-zA-Z\s]*$/.test(nome)) {
+        alert("Por favor, insira um nome válido contendo apenas letras.");
+        return;
+      }
+      if (!/^\d+$/.test(ra)) {
+        alert("Por favor, insira um RA válido contendo apenas números.");
+        return;
+      }
+      if (!nome.trim() || !ra.trim() || !email.trim()) {
+        alert("Por favor, preencha o nome, o RA e o e-mail do aluno.");
+        return;
+      }
 
       let tabelaAlunos = document.getElementById("lista-alunos").getElementsByTagName('tbody')[0];
       let newRow = tabelaAlunos.insertRow(tabelaAlunos.rows.length);
@@ -151,52 +136,54 @@
       let cellEmail = newRow.insertCell(2);
       cellEmail.innerHTML = email;
 
+document.getElementById("nome").value = "";
+      document.getElementById("ra").value = "";
+      document.getElementById("email").value = "";
+
       let cellProva1 = newRow.insertCell(3);
-      cellProva1.innerHTML = prova1;
+      cellProva1.innerHTML = '';
 
       let cellProvaIntegrada1 = newRow.insertCell(4);
-      cellProvaIntegrada1.innerHTML = provaIntegrada1;
+      cellProvaIntegrada1.innerHTML = '';
 
       let cellAep1 = newRow.insertCell(5);
-      cellAep1.innerHTML = aep1;
+      cellAep1.innerHTML = '';
 
       let cellProva2 = newRow.insertCell(6);
-      cellProva2.innerHTML = prova2;
+      cellProva2.innerHTML = '';
 
       let cellProvaIntegrada2 = newRow.insertCell(7);
-      cellProvaIntegrada2.innerHTML = provaIntegrada2;
+      cellProvaIntegrada2.innerHTML = '';
 
       let cellAep2 = newRow.insertCell(8);
-      cellAep2.innerHTML = aep2;
+      cellAep2.innerHTML = '';
 
-      let cellMediaBimestre1 = newRow.insertCell(9);
-      cellMediaBimestre1.innerHTML = "";
+      let cellMedia1 = newRow.insertCell(9);
+      cellMedia1.innerHTML = '';
 
-      let cellMediaBimestre2 = newRow.insertCell(10);
-      cellMediaBimestre2.innerHTML = "";
+      let cellMedia2 = newRow.insertCell(10);
+      cellMedia2.innerHTML = '';
 
-      let cellMediaSemestral = newRow.insertCell(11);
-      cellMediaSemestral.innerHTML = "";
+      let cellMediaFinal = newRow.insertCell(11);
+      cellMediaFinal.innerHTML = '';
 
       let cellStatus = newRow.insertCell(12);
       cellStatus.innerHTML = "";
 
       let cellAcoes = newRow.insertCell(13);
       cellAcoes.innerHTML = '<button onclick="editarAluno(this)">Editar</button><button onclick="excluirAluno(this)">Excluir</button>';
+      salvarDadosNoLocalStorage();
     }
 
-    // Função para editar as informações de um aluno
     function editarAluno(btn) {
       let row = btn.parentNode.parentNode;
       let cells = row.cells;
-
-      // Se as células estiverem editáveis, torna-as não editáveis
       if (cells[3].contentEditable === "true") {
         for (let i = 3; i <= 8; i++) {
           cells[i].contentEditable = false;
         }
         btn.innerText = "Editar";
-      } else { // Caso contrário, torna-as editáveis
+      } else { 
         for (let i = 3; i <= 8; i++) {
           cells[i].contentEditable = true;
         }
@@ -204,37 +191,57 @@
       }
     }
 
-    // Função para excluir um aluno
     function excluirAluno(btn) {
       let confirma = confirm("Tem certeza que deseja excluir este aluno?");
       if (confirma) {
         let row = btn.parentNode.parentNode;
         row.parentNode.removeChild(row);
+salvarDadosNoLocalStorage();
       }
     }
 
-    // Função para calcular as notas e atualizar o status de aprovação
     function calcularNotas() {
       let tabelaAlunos = document.getElementById("lista-alunos").getElementsByTagName('tbody')[0];
       let rows = tabelaAlunos.rows;
+      if (rows.length === 0) {
+        alert("Não há alunos para calcular as notas.");
+        return;
+      }
 
       for (let i = 0; i < rows.length; i++) {
         let cells = rows[i].cells;
+        if (cells[3].innerHTML.trim() === "" || cells[4].innerHTML.trim() === "" || cells[5].innerHTML.trim() === "" ||
+            cells[6].innerHTML.trim() === "" || cells[7].innerHTML.trim() === "" || cells[8].innerHTML.trim() === "") {
+          alert("Por favor, preencha todas as notas para calcular as médias.");
+          return;
+        }
+        for (let j = 3; j <= 8; j++) {
+          if (isNaN(cells[j].innerHTML.trim())) {
+            alert("Por favor, insira apenas números nas notas.");
+            return;
+          }
+        }
 
-        let mediaBimestre1 = (parseFloat(cells[3].innerHTML) + parseFloat(cells[4].innerHTML) + parseFloat(cells[5].innerHTML)) / 3;
-        let mediaBimestre2 = (parseFloat(cells[6].innerHTML) + parseFloat(cells[7].innerHTML) + parseFloat(cells[8].innerHTML)) / 3;
+        let prova1 = parseFloat(cells[3].innerHTML);
+        let provaIntegrada1 = parseFloat(cells[4].innerHTML);
+        let aep1 = parseFloat(cells[5].innerHTML);
 
-        cells[9].innerHTML = mediaBimestre1.toFixed(2);
-        cells[10].innerHTML = mediaBimestre2.toFixed(2);
-        cells[11].innerHTML = ((mediaBimestre1 + mediaBimestre2) / 2).toFixed(2);
+        let prova2 = parseFloat(cells[6].innerHTML);
+        let provaIntegrada2 = parseFloat(cells[7].innerHTML);
+        let aep2 = parseFloat(cells[8].innerHTML);
 
-        let mediaSemestral = parseFloat(cells[11].innerHTML);
+        let media1 = (prova1 + provaIntegrada1 + aep1);
+        let media2 = (prova2 + provaIntegrada2 + aep2);
 
-        // Determinar o status de aprovação com base na média semestral
-        if (mediaSemestral >= 6) {
+        cells[9].innerHTML = media1;
+        cells[10].innerHTML = media2;
+
+        let mediaFinal = ((media1 + media2) / 2).toFixed(2);
+        cells[11].innerHTML = mediaFinal;
+        if (mediaFinal >= 6) {
           cells[12].innerHTML = "Aprovado";
           cells[12].className = "aprovado";
-        } else if (mediaSemestral >= 3) {
+        } else if (mediaFinal >= 3) {
           cells[12].innerHTML = "Recuperação";
           cells[12].className = "recuperacao";
         } else {
@@ -242,7 +249,73 @@
           cells[12].className = "reprovado";
         }
       }
+      salvarDadosNoLocalStorage();
     }
+
+    function salvarDadosNoLocalStorage() {
+      let alunos = [];
+      let tabelaAlunos = document.getElementById("lista-alunos").getElementsByTagName('tbody')[0];
+      let rows = tabelaAlunos.rows;
+      for (let i = 0; i < rows.length; i++) {
+        let cells = rows[i].cells;
+        let aluno = {
+          nome: cells[0].innerHTML,
+          ra: cells[1].innerHTML,
+          email: cells[2].innerHTML,
+          prova1: cells[3].innerHTML,
+          provaIntegrada1: cells[4].innerHTML,
+          aep1: cells[5].innerHTML,
+          prova2: cells[6].innerHTML,
+          provaIntegrada2: cells[7].innerHTML,
+          aep2: cells[8].innerHTML,
+          media1: cells[9].innerHTML,
+          media2: cells[10].innerHTML,
+          mediaFinal: cells[11].innerHTML,
+          status: cells[12].innerHTML
+        };
+        alunos.push(aluno);
+      }
+      localStorage.setItem('alunos', JSON.stringify(alunos));
+    }
+    window.onload = function() {
+      let alunosData = localStorage.getItem('alunos');
+      if (alunosData) {
+        let alunos = JSON.parse(alunosData);
+        let tabelaAlunos = document.getElementById("lista-alunos").getElementsByTagName('tbody')[0];
+        for (let i = 0; i < alunos.length; i++) {
+          let aluno = alunos[i];
+          let newRow = tabelaAlunos.insertRow(tabelaAlunos.rows.length);
+          let cellNome = newRow.insertCell(0);
+          cellNome.innerHTML = aluno.nome;
+          let cellRA = newRow.insertCell(1);
+          cellRA.innerHTML = aluno.ra;
+          let cellEmail = newRow.insertCell(2);
+          cellEmail.innerHTML = aluno.email;
+          let cellProva1 = newRow.insertCell(3);
+          cellProva1.innerHTML = aluno.prova1;
+          let cellProvaIntegrada1 = newRow.insertCell(4);
+          cellProvaIntegrada1.innerHTML = aluno.provaIntegrada1;
+          let cellAep1 = newRow.insertCell(5);
+          cellAep1.innerHTML = aluno.aep1;
+          let cellProva2 = newRow.insertCell(6);
+          cellProva2.innerHTML = aluno.prova2;
+          let cellProvaIntegrada2 = newRow.insertCell(7);
+          cellProvaIntegrada2.innerHTML = aluno.provaIntegrada2;
+          let cellAep2 = newRow.insertCell(8);
+          cellAep2.innerHTML = aluno.aep2;
+          let cellMedia1 = newRow.insertCell(9);
+          cellMedia1.innerHTML = aluno.media1;
+          let cellMedia2 = newRow.insertCell(10);
+          cellMedia2.innerHTML = aluno.media2;
+          let cellMediaFinal = newRow.insertCell(11);
+          cellMediaFinal.innerHTML = aluno.mediaFinal;
+          let cellStatus = newRow.insertCell(12);
+          cellStatus.innerHTML = aluno.status;
+          let cellAcoes = newRow.insertCell(13);
+          cellAcoes.innerHTML = '<button onclick="editarAluno(this)">Editar</button><button onclick="excluirAluno(this)">Excluir</button>';
+        }
+      }
+    };
   </script>
 </body>
 </html>

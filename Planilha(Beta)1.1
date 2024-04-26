@@ -6,55 +6,78 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      margin: 30px;
     }
-
-    input, button {
-      margin-bottom: 10px;
+    h1 {
+      text-align: center; 
+      font-family: Cambria, Cochin;
+      padding-left: 20px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3), 0px 4px 12px rgba(0, 0, 0, 0.5);
+      border: 10px solid #ffffff;
+      font-size: 36px;
     }
-
+    h2 {  
+      padding-left: 20px;
+      font-family: Cambria, Cochin;
+      font-size: 30px;
+    }
+    input {
+      padding: 10px;
+      border: 1px solid #000000;
+      border-radius: 5px;
+      font-size: 16px;
+      width: 150px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    button {
+      background-color: #8a91f33a; 
+      border: none; 
+      color: rgb(0, 0, 0); 
+      padding: 5px 10px; 
+      text-align: center; 
+      text-decoration: none; 
+      font-size: 18px; 
+      margin: 1px 1px; 
+      cursor: pointer; 
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    }
     #notas {
       margin-top: 20px;
+      background-color: #bbb3b34d; 
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3), 0px 4px 12px rgba(0, 0, 0, 0.5);
+      font-size: 10px;
     }
-
     #lista-alunos {
       border-collapse: collapse;
       width: 100%;
     }
-
     #lista-alunos th, #lista-alunos td {
-      border: 1px solid #ddd;
+      border: 2px solid black;
       padding: 8px;
-      text-align: left;
+      text-align: center;
     }
-
     #lista-alunos th {
       background-color: #f2f2f2;
+      border-radius: 100px;
     }
-
     .aluno {
       margin-bottom: 10px;
     }
-
     .aluno input {
       margin-right: 10px;
     }
-
     .notas-container {
       display: none;
     }
-
     .media {
       font-weight: bold;
     }
-
     .aprovado {
       background-color: lightgreen;
     }
-
     .recuperacao {
       background-color: yellow;
     }
-
     .reprovado {
       background-color: lightcoral;
     }
@@ -63,24 +86,24 @@
 <body>
   <h1>Registro de Notas dos Alunos</h1>
   <div id="alunos">
-    <input type="text" id="nome" placeholder="Nome do aluno">
-    <input type="text" id="ra" placeholder="RA do aluno">
-    <input type="email" id="email" placeholder="E-mail do aluno">
-    <button onclick="adicionarAluno()">Adicionar Aluno</button>
+    <input type="text" id="input_nome" placeholder="Nome do aluno">
+    <input type="text" id="input_ra" placeholder="RA do aluno">
+    <input type="email" id="input_email" placeholder="E-mail do aluno">
+    <button onclick="adicionaDadosAluno()">Adicionar Aluno</button>
   </div>
   <div id="notas">
     <h2>Notas</h2>
     <div class="notas-container">
       <label>Primeiro Bimestre:</label>
-      <input type="number" id="prova_1" placeholder="Nota da prova (até 8)">
-      <input type="number" id="prova_integrada_1" placeholder="Nota da prova integrada (até 1)">
-      <input type="number" id="aep_1" placeholder="Nota da AEP (até 1)">
+      <input type="number" id="input_prova_1" placeholder="Nota da prova (até 8)">
+      <input type="number" id="input_prova_integrada_1" placeholder="Nota da prova integrada (até 1)">
+      <input type="number" id="input_aep_1" placeholder="Nota da AEP (até 1)">
     </div>
     <div class="notas-container">
       <label>Segundo Bimestre:</label>
-      <input type="number" id="prova_2" placeholder="Nota da prova (até 8)">
-      <input type="number" id="prova_integrada_2" placeholder="Nota da prova integrada (até 1)">
-      <input type="number" id="aep_2" placeholder="Nota da AEP (até 1)">
+      <input type="number" id="input_prova_2" placeholder="Nota da prova (até 8)">
+      <input type="number" id="input_prova_integrada_2" placeholder="Nota da prova integrada (até 1)">
+      <input type="number" id="input_aep_2" placeholder="Nota da AEP (até 1)">
     </div>
     <table id="lista-alunos">
       <thead>
@@ -103,24 +126,27 @@
       </thead>
       <tbody>
       </tbody>
-    </table>
+    </table><br>
     <button onclick="calcularNotas()">Calcular Notas</button>
   </div>
   <script>
-    function adicionarAluno() {
-      let nome = document.getElementById("nome").value;
-      let ra = document.getElementById("ra").value;
-      let email = document.getElementById("email").value;
+    function adicionaDadosAluno() {
+      let nome = document.getElementById("input_nome").value;
+      let ra = document.getElementById("input_ra").value;
+      let email = document.getElementById("input_email").value;
+
       if (!/^[a-zA-Z\s]*$/.test(nome)) {
         alert("Por favor, insira um nome válido contendo apenas letras.");
         return;
       }
+
       if (!/^\d+$/.test(ra)) {
         alert("Por favor, insira um RA válido contendo apenas números.");
         return;
       }
-      if (!nome.trim() || !ra.trim() || !email.trim()) {
-        alert("Por favor, preencha o nome, o RA e o e-mail do aluno.");
+
+      if (!email.trim() || !isValidEmail(email)) {
+        alert("Por favor, insira um e-mail válido.");
         return;
       }
 
@@ -136,9 +162,9 @@
       let cellEmail = newRow.insertCell(2);
       cellEmail.innerHTML = email;
 
-document.getElementById("nome").value = "";
-      document.getElementById("ra").value = "";
-      document.getElementById("email").value = "";
+      document.getElementById("input_nome").value = "";
+      document.getElementById("input_ra").value = "";
+      document.getElementById("input_email").value = "";
 
       let cellProva1 = newRow.insertCell(3);
       cellProva1.innerHTML = '';
@@ -175,31 +201,47 @@ document.getElementById("nome").value = "";
       salvarDadosNoLocalStorage();
     }
 
-    function editarAluno(btn) {
-      let row = btn.parentNode.parentNode;
-      let cells = row.cells;
-      if (cells[3].contentEditable === "true") {
-        for (let i = 3; i <= 8; i++) {
-          cells[i].contentEditable = false;
-        }
-        btn.innerText = "Editar";
-      } else { 
-        for (let i = 3; i <= 8; i++) {
-          cells[i].contentEditable = true;
-        }
-        btn.innerText = "Salvar";
-      }
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
 
+    function editarAluno(btn) {
+    let row = btn.parentNode.parentNode;
+    let cells = row.cells;
+
+    if (cells[3].contentEditable === "true") {
+    for (let i = 3; i <= 8; i++) {
+      let nota = parseFloat(cells[i].innerText);
+      if (!isNaN(nota)) {
+        if ((i === 3 || i === 6) && nota > 8) {
+          alert("A nota da prova deve ser até 8.");
+        } else if ((i === 4 || i === 5 || i === 7 || i === 8) && nota > 1) {
+          alert("A nota deve ser até 1.");
+          cells[i].innerText = '1';
+        }
+      }
+      cells[i].contentEditable = false;
+    }
+    btn.innerText = "Editar";
+    } else { 
+    for (let i = 3; i <= 8; i++) {
+      if (i >= 9) {
+        continue;
+      }
+      cells[i].contentEditable = true;
+    }
+    btn.innerText = "Salvar";
+    }
+      salvarDadosNoLocalStorage();
+    }
     function excluirAluno(btn) {
       let confirma = confirm("Tem certeza que deseja excluir este aluno?");
       if (confirma) {
         let row = btn.parentNode.parentNode;
         row.parentNode.removeChild(row);
-salvarDadosNoLocalStorage();
+        salvarDadosNoLocalStorage();
       }
     }
-
     function calcularNotas() {
       let tabelaAlunos = document.getElementById("lista-alunos").getElementsByTagName('tbody')[0];
       let rows = tabelaAlunos.rows;
@@ -207,19 +249,26 @@ salvarDadosNoLocalStorage();
         alert("Não há alunos para calcular as notas.");
         return;
       }
-
       for (let i = 0; i < rows.length; i++) {
         let cells = rows[i].cells;
-        if (cells[3].innerHTML.trim() === "" || cells[4].innerHTML.trim() === "" || cells[5].innerHTML.trim() === "" ||
-            cells[6].innerHTML.trim() === "" || cells[7].innerHTML.trim() === "" || cells[8].innerHTML.trim() === "") {
+        if (
+          cells[3].innerHTML.trim() === "" ||
+          cells[4].innerHTML.trim() === "" ||
+          cells[5].innerHTML.trim() === "" ||
+          cells[6].innerHTML.trim() === "" ||
+          cells[7].innerHTML.trim() === "" ||
+          cells[8].innerHTML.trim() === ""
+        ) {
           alert("Por favor, preencha todas as notas para calcular as médias.");
           return;
         }
         for (let j = 3; j <= 8; j++) {
-          if (isNaN(cells[j].innerHTML.trim())) {
+          let notaValue = cells[j].innerHTML.trim().replace(",", ".");
+          if (isNaN(notaValue)) {
             alert("Por favor, insira apenas números nas notas.");
             return;
           }
+          cells[j].innerHTML = notaValue;
         }
 
         let prova1 = parseFloat(cells[3].innerHTML);
@@ -230,11 +279,11 @@ salvarDadosNoLocalStorage();
         let provaIntegrada2 = parseFloat(cells[7].innerHTML);
         let aep2 = parseFloat(cells[8].innerHTML);
 
-        let media1 = (prova1 + provaIntegrada1 + aep1);
-        let media2 = (prova2 + provaIntegrada2 + aep2);
+        let media1 = prova1 + provaIntegrada1 + aep1;
+        let media2 = prova2 + provaIntegrada2 + aep2;
 
-        cells[9].innerHTML = media1;
-        cells[10].innerHTML = media2;
+        cells[9].innerHTML = media1.toFixed(2);
+        cells[10].innerHTML = media2.toFixed(2);
 
         let mediaFinal = ((media1 + media2) / 2).toFixed(2);
         cells[11].innerHTML = mediaFinal;
@@ -277,6 +326,7 @@ salvarDadosNoLocalStorage();
       }
       localStorage.setItem('alunos', JSON.stringify(alunos));
     }
+
     window.onload = function() {
       let alunosData = localStorage.getItem('alunos');
       if (alunosData) {
